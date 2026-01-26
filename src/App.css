@@ -1,0 +1,342 @@
+/* ===== Reset ===== */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: sans-serif;
+  background-color: black;
+  font-family: "Fwont", sans-serif;
+}
+
+/* ===== Carousel ===== */
+.carousel-container {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+}
+
+.carousel-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1s ease;
+  cursor: pointer;
+}
+
+.carousel-container img.active {
+  opacity: 1;
+}
+
+/* ===== Carousel Buttons ===== */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 2rem;
+  /* prevent extra spacing from font */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  background-color: white;
+  border: none;
+  color: black;
+  cursor: pointer;
+  z-index: 10;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, background-color 0.3s ease, transform 0.2s ease;
+}
+.carousel-btn.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+
+
+.carousel-btn.left {
+  left: 50px;
+}
+
+.carousel-btn.right {
+  right: 50px;
+}
+
+
+
+.backgroundtag{
+    height: auto;
+    width: auto;
+    background-color: #fff;
+    color: black;
+    padding: 10px 10px;
+    bottom: 50px;
+    left: 50px;
+    position: fixed;
+}
+/* ===== Navbar ===== */
+.navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100vw - 120px);
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 60px;
+  color: white;
+  z-index: 50;
+}
+
+.overlay {
+position: fixed; /* cover the entire viewport */
+top: 0;
+left: 0;
+width: 100vw;
+height: 100vh;
+background-color: rgba(0,0,0,0.2); /* semi-transparent black */
+opacity: 0; /* hidden by default */
+pointer-events: none; /* allow clicks to pass through when hidden */
+transition: opacity 0.5s ease;
+z-index: 5; /* below navbar but above carousel */
+}
+
+.navbar:hover ~ .overlay {
+opacity: 1;
+pointer-events: auto; /* block interactions behind overlay if you want */
+}
+.navbar-left {
+  font-size: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 6px;
+}
+
+.navbar-right {
+  display: flex;
+  gap: 0rem;  
+  font-size: 1.2rem;
+}
+
+.navbar-item-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.navbar-item {
+  color: white;
+  text-decoration: none;
+
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.navbar-item:hover {
+  color: #ffcc00;
+}
+/* ===== Dropdown ===== */
+
+/* Dropdown container */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Main menu button */
+.menuitem {
+  text-decoration: none;
+  color: #fff;
+  margin: 10px 20px;
+ position: relative;
+  border-radius: 4px;
+  display: inline-block;
+}
+ .nav-link{
+        text-decoration: none;
+    color: #fff;
+    margin: 10px 20px;
+    border-radius: 4px;
+    display: inline-block;
+    position: relative;
+ }
+
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+  display: none; /* hidden initially */
+  position: absolute;
+  top: 100%; /* directly below menu button */
+  left: 50%;
+  transform: translateX(-50%);
+  flex-direction: column;
+  align-items: center;
+  z-index: 100; /* make sure it appears above everything */
+  padding-top: 0; /* no extra padding so triangle sits on top */
+}
+
+/* Show dropdown on hover of the container */
+.dropdown:hover .dropdown-content {
+  display: flex;
+}
+
+/* Triangle at the top of dropdown */
+.dropdown-triangle {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #fff; /* triangle color */
+  margin-bottom: -1px; /* small overlap so no gap */
+}
+
+/* Dropdown list */
+.dropdown-list {
+  background-color: #fff;
+  min-width: 200px;
+  
+
+overflow-y: auto; 
+overflow-x: hidden;
+ max-height: calc(100vh - 120px);
+
+}
+
+/* List items */
+.dropdown-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.dropdown-list li {
+  
+  
+  cursor: pointer;
+  color: #000;
+  font-size: 14px;
+}
+
+.menuitem::after {
+content: "";
+position: absolute;
+left: 0;
+bottom: 0px;
+width: 100%;
+height: 1px;
+background: currentColor;
+
+
+
+transition: opacity 0.3s ease;
+opacity: 0;
+}
+
+
+/* hover */
+.menuitem:hover::after {
+
+opacity: 1;
+}
+
+.nav-link::after {
+content: "";
+position: absolute;
+left: 0;
+bottom: 0px;
+width: 100%;
+height: 1px;
+background: currentColor;
+
+
+
+transition: opacity 0.3s ease;
+opacity: 0;
+}
+
+
+/* hover */
+.nav-link:hover::after {
+
+opacity: 1;
+}
+
+.dropdown-list li:last-child {
+  border-bottom: none;
+}
+
+.dropdown-list a::after {
+content: "";
+position: absolute;
+left: 0;
+bottom: -2px; /* space below text */
+width: 100%;
+height: 1px;
+background: currentColor; /* matches text color */
+
+
+
+
+transition:opacity 0.25s ease;
+opacity: 0;
+}
+
+
+/* hover state */
+.dropdown-list li:hover a::after {
+ /* grow underline */
+opacity: 1;
+}
+/* Links inside list items */
+.dropdown-list li a {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+ 
+  margin-top: 5px;
+     margin-bottom: 5px;
+      margin-left: 20px;
+      position: relative;
+text-decoration: none;
+display: inline-block;
+}
+.dropdown-list li a{
+  
+    
+}
+
+.dropdown-list::-webkit-scrollbar {
+width: 8px;
+}
+
+
+.dropdown-list::-webkit-scrollbar-thumb {
+background: rgba(83, 63, 21, 0.3);
+border-radius: 10px;
+}
+
+
+@font-face {
+font-family: "Fwont"; /* Name you’ll use in CSS */
+src: url("./public/fwont.ttf") format("truetype"); /* path to your font file */
+font-weight: normal; /* or bold if it’s bold */
+font-style: normal; /* or italic if it’s italic */
+}
