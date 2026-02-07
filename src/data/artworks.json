@@ -1,9 +1,9 @@
 [
-{"file":"art1.jpg","type":"Painting","year":"1867"},
-{"file":"art2.jpg","type":"Sketch","year":"1902"},
-{"file":"art3.jpg","type":"Digital","year":"2024"},
-{"file":"art4.jpg","type":"Painting","year":"1889"},
-{"file":"art5.jpg","type":"Sketch","year":"1911"},
-{"file":"art6.jpg","type":"Photo","year":"1998 - 3712"},
-{"file":"art7.jpg","type":"Digital","year":"2022"}
+  {"file":"art1.jpg","type":"Painting","year":"1840","title": "Sunset Over the Hills", "medium": "Oil on Canvas"},
+  {"file":"art2.jpg","type":"Sketch","year":"1840","title": "Study of Hands", "medium": "Graphite on Paper"},
+  {"file":"art3.jpg","type":"Digital","year":"1840","title": "Abstract Dreams", "medium": "Digital Painting"},
+  {"file":"art4.jpg","type":"Painting","year":"1840","title": "The Serene Lake", "medium": "Acrylic on Canvas"},
+  {"file":"art5.jpg","type":"Sketch","year":"1840","title": "Architectural Lines", "medium": "Ink on Paper"},
+  {"file":"art6.jpg","type":"Photo","year":"1840","title": "Market in Morning Light", "medium": "Daguerreotype"},
+  {"file":"art7.jpg","type":"Digital","year":"1840","title": "Neon Horizons", "medium": "Digital Illustration"}
 ]

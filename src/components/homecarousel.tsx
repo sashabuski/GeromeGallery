@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
 import artworksData from "../data/artworks.json";
+import { Link } from "react-router-dom";
 
-// Load all images from folder
 const artworkModules = import.meta.glob("../assets/bgimages/*.{png,jpg,jpeg,svg}", { eager: true });
 
-// Build filename → actual image path map
 const imageMap: Record<string, string> = {};
 Object.entries(artworkModules).forEach(([path, mod]: any) => {
-  const fileName = path.split("/").pop(); // e.g. "art1.jpg"
+  const fileName = path.split("/").pop(); 
   imageMap[fileName!] = mod.default;
 });
 
-// Merge JSON metadata with real image paths
 const artworks = artworksData.map((art: any) => ({
   ...art,
   src: imageMap[art.file],
@@ -22,7 +20,6 @@ const HomeCarousel: React.FC = () => {
   const [mouseX, setMouseX] = useState(window.innerWidth / 2);
   const [showButtons, setShowButtons] = useState(false);
 
-  // -------- AUTO SLIDE --------
   useEffect(() => {
     if (!artworks.length) return;
 
@@ -33,7 +30,6 @@ const HomeCarousel: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // -------- MOUSE TRACKING --------
   useEffect(() => {
     const handleMove = (e: MouseEvent) => {
       setMouseX(e.clientX);
@@ -53,7 +49,6 @@ const HomeCarousel: React.FC = () => {
     };
   }, []);
 
-  // -------- NAVIGATION --------
   const prevSlide = () => {
     setCurrentIndex((prev) => (prev - 1 + artworks.length) % artworks.length);
   };
@@ -64,7 +59,6 @@ const HomeCarousel: React.FC = () => {
 
   const isLeftSide = mouseX < window.innerWidth / 2;
 
-  // -------- SCREEN CLICK HANDLER --------
   const handleScreenClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const clickX = e.clientX;
     const screenMid = window.innerWidth / 2;
@@ -87,7 +81,7 @@ const HomeCarousel: React.FC = () => {
           />
         ))}
 
-        {/* LEFT BUTTON */}
+      
         <button
           className={`carousel-btn left ${showButtons && isLeftSide ? "show" : ""}`}
           onClick={(e) => {
@@ -98,7 +92,7 @@ const HomeCarousel: React.FC = () => {
           ‹
         </button>
 
-        {/* RIGHT BUTTON */}
+    
         <button
           className={`carousel-btn right ${showButtons && !isLeftSide ? "show" : ""}`}
           onClick={(e) => {
@@ -110,10 +104,12 @@ const HomeCarousel: React.FC = () => {
         </button>
       </div>
 
-      {/* METADATA LABEL */}
-      <div className="backgroundtag">
-        {currentArtwork?.type.toUpperCase()} / {currentArtwork?.year}
-      </div>
+      <Link
+className="backgroundtag"
+to={`/sketch/${currentArtwork?.year}`}
+>
+<span className="type">{currentArtwork?.type.toUpperCase()}</span> / {currentArtwork?.year}
+</Link>
     </div>
   );
 };

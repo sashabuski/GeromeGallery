@@ -1,4 +1,5 @@
 import React from "react";
+import { Link, useLocation } from "react-router-dom";
 import Dropdown from "./dropdown";
 
 interface DropdownItem {
@@ -17,20 +18,21 @@ interface NavBarProps {
   linkItems: LinkItem[];
 }
 
+const NavBar: React.FC<NavBarProps> = ({ artistName, dropdownItems, linkItems }) => {
+  const location = useLocation();
 
-const NavBar: React.FC<NavBarProps> = ({
-  artistName,
-  dropdownItems,
-  linkItems,
-}) => {
+  const isArtPage = location.pathname.startsWith("/painting") || location.pathname.startsWith("/sketch");
+  const navTextColor = isArtPage ? "black" : "white";
+
   return (
-    <nav className="navbar">
+    <nav className="navbar" style={{ color: navTextColor }}>
+      <div className="navbar-left">
+        <Link to="/" className="home-link" style={{ color: navTextColor }}>
+          {artistName}
+        </Link>
+      </div>
 
-      <div className="navbar-left">{artistName}</div>
-
-     
       <div className="navbar-right">
-      
         {dropdownItems.map((item, index) => (
           <Dropdown
             key={`dropdown-${index}`}
@@ -39,15 +41,15 @@ const NavBar: React.FC<NavBarProps> = ({
           />
         ))}
 
-     
         {linkItems.map((item, index) => (
-          <a
+          <Link
             key={`link-${index}`}
-            href={item.link}
+            to={item.link}
             className="nav-link"
+            style={{ color: navTextColor }}
           >
             {item.label}
-          </a>
+          </Link>
         ))}
       </div>
     </nav>

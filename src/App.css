@@ -1,4 +1,4 @@
-/* ===== Reset ===== */
+
 html, body, #root {
   margin: 0;
   padding: 0;
@@ -10,7 +10,13 @@ html, body, #root {
   font-family: "Fwont", sans-serif;
 }
 
-/* ===== Carousel ===== */
+.artpage-container{
+    background-color: white;
+    height: 100%;
+    padding-top: 100px;
+    padding-left: 50px;
+}
+
 .carousel-container {
   width: 100vw;
   height: 100vh;
@@ -30,7 +36,7 @@ html, body, #root {
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 1s ease;
+  transition: opacity 0.2s ease;
   cursor: pointer;
 }
 
@@ -38,7 +44,6 @@ html, body, #root {
   opacity: 1;
 }
 
-/* ===== Carousel Buttons ===== */
 .carousel-btn {
   position: absolute;
   top: 50%;
@@ -48,18 +53,14 @@ html, body, #root {
   display: flex;
   justify-content: center;
   align-items: center;
-
   font-size: 2rem;
-  /* prevent extra spacing from font */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
   background-color: white;
   border: none;
   color: black;
   cursor: pointer;
   z-index: 10;
-
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.25s ease, background-color 0.3s ease, transform 0.2s ease;
@@ -69,7 +70,11 @@ html, body, #root {
   pointer-events: auto;
 }
 
-
+.blackbut{
+  background-color: black;
+  color: white;
+  top: 40%;
+}
 
 .carousel-btn.left {
   left: 50px;
@@ -79,54 +84,75 @@ html, body, #root {
   right: 50px;
 }
 
+.carousel-item img {
+  transition: opacity 0.4s ease-out;
+}
 
-
+.fade-out {
+  opacity: 0;
+}
 .backgroundtag{
     height: auto;
     width: auto;
     background-color: #fff;
     color: black;
-    padding: 10px 10px;
+    padding: 10px 20px;
     bottom: 50px;
     left: 50px;
     position: fixed;
+    letter-spacing: 4px;
+    text-decoration: none;
 }
-/* ===== Navbar ===== */
+
+.backgroundtag .type{
+    color: grey;
+}
+
 .navbar {
   position: absolute;
   top: 0;
   left: 0;
-  width: calc(100vw - 120px);
+  width: calc(100vw - 100px);
   height: 60px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 30px 60px;
+  padding: 30px 50px;
   color: white;
   z-index: 50;
+  transition: color 0.5s ease;
 }
 
 .overlay {
-position: fixed; /* cover the entire viewport */
+position: fixed; 
 top: 0;
 left: 0;
 width: 100vw;
 height: 100vh;
-background-color: rgba(0,0,0,0.2); /* semi-transparent black */
-opacity: 0; /* hidden by default */
-pointer-events: none; /* allow clicks to pass through when hidden */
+background-color: rgba(0,0,0,0.2); 
+opacity: 0; 
+pointer-events: none;
 transition: opacity 0.5s ease;
-z-index: 5; /* below navbar but above carousel */
+z-index: 5; 
+}
+
+.home-link {
+text-decoration: none;
+color: inherit;
+ transition: color 0.2s ease;
 }
 
 .navbar:hover ~ .overlay {
 opacity: 1;
-pointer-events: auto; /* block interactions behind overlay if you want */
+pointer-events: auto; 
 }
 .navbar-left {
   font-size: 2rem;
   text-transform: uppercase;
   letter-spacing: 6px;
+  cursor: pointer;
+  text-decoration: none;
+ 
 }
 
 .navbar-right {
@@ -151,22 +177,21 @@ pointer-events: auto; /* block interactions behind overlay if you want */
 .navbar-item:hover {
   color: #ffcc00;
 }
-/* ===== Dropdown ===== */
 
-/* Dropdown container */
 .dropdown {
   position: relative;
   display: inline-block;
 }
 
-/* Main menu button */
 .menuitem {
   text-decoration: none;
-  color: #fff;
+
   margin: 10px 20px;
  position: relative;
   border-radius: 4px;
   display: inline-block;
+  cursor: pointer;
+  transition: color 0.2s ease;
 }
  .nav-link{
         text-decoration: none;
@@ -175,38 +200,36 @@ pointer-events: auto; /* block interactions behind overlay if you want */
     border-radius: 4px;
     display: inline-block;
     position: relative;
+    cursor: pointer;
+    transition: color 0.2s ease;
  }
 
 
-/* Dropdown content (hidden by default) */
 .dropdown-content {
-  display: none; /* hidden initially */
+  display: none; 
   position: absolute;
-  top: 100%; /* directly below menu button */
+  top: 100%; 
   left: 50%;
   transform: translateX(-50%);
   flex-direction: column;
   align-items: center;
-  z-index: 100; /* make sure it appears above everything */
-  padding-top: 0; /* no extra padding so triangle sits on top */
+  z-index: 100; 
+  padding-top: 0; 
 }
 
-/* Show dropdown on hover of the container */
 .dropdown:hover .dropdown-content {
   display: flex;
 }
 
-/* Triangle at the top of dropdown */
 .dropdown-triangle {
   width: 0;
   height: 0;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
-  border-bottom: 10px solid #fff; /* triangle color */
-  margin-bottom: -1px; /* small overlap so no gap */
+  border-bottom: 10px solid #fff; 
+  margin-bottom: -1px; 
 }
 
-/* Dropdown list */
 .dropdown-list {
   background-color: #fff;
   min-width: 200px;
@@ -214,11 +237,10 @@ pointer-events: auto; /* block interactions behind overlay if you want */
 
 overflow-y: auto; 
 overflow-x: hidden;
- max-height: calc(100vh - 120px);
-
+ max-height: calc(100vh - 140px);
+ transition: background-color 0.2s ease;
 }
 
-/* List items */
 .dropdown-list ul {
   list-style: none;
   margin: 0;
@@ -250,8 +272,6 @@ transition: opacity 0.3s ease;
 opacity: 0;
 }
 
-
-/* hover */
 .menuitem:hover::after {
 
 opacity: 1;
@@ -272,8 +292,6 @@ transition: opacity 0.3s ease;
 opacity: 0;
 }
 
-
-/* hover */
 .nav-link:hover::after {
 
 opacity: 1;
@@ -287,25 +305,19 @@ opacity: 1;
 content: "";
 position: absolute;
 left: 0;
-bottom: -2px; /* space below text */
+bottom: -2px; 
 width: 100%;
 height: 1px;
-background: currentColor; /* matches text color */
-
-
-
-
+background: currentColor; 
 transition:opacity 0.25s ease;
 opacity: 0;
 }
 
-
-/* hover state */
 .dropdown-list li:hover a::after {
- /* grow underline */
+
 opacity: 1;
 }
-/* Links inside list items */
+
 .dropdown-list li a {
   color: inherit;
   text-decoration: none;
@@ -335,8 +347,8 @@ border-radius: 10px;
 
 
 @font-face {
-font-family: "Fwont"; /* Name you’ll use in CSS */
-src: url("./public/fwont.ttf") format("truetype"); /* path to your font file */
-font-weight: normal; /* or bold if it’s bold */
-font-style: normal; /* or italic if it’s italic */
+font-family: "Fwont"; 
+src: url("/fwont.ttf") format("truetype"); 
+font-weight: normal; 
+font-style: normal; 
 }
