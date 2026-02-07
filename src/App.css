@@ -91,6 +91,9 @@ html, body, #root {
 .fade-out {
   opacity: 0;
 }
+
+
+
 .backgroundtag{
     height: auto;
     width: auto;
@@ -352,3 +355,4 @@ src: url("/fwont.ttf") format("truetype");
 font-weight: normal; 
 font-style: normal; 
 }
+
