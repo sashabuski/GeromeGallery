@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import artworksData from "../data/artworks.json";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface Artwork {
   file: string;
@@ -14,6 +15,16 @@ interface HorizontalCarouselProps {
 }
 
 const HorizontalCarousel: React.FC<HorizontalCarouselProps> = ({ year }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+
+  const openOverlay = (artFile: string) => {
+    navigate(`/painting/${year}/${encodeURIComponent(artFile)}`, {
+      state: { backgroundLocation: location },
+    });
+  };
+
   const artworksForYear = artworksData.filter((art) => art.year === year);
 
   const modules = import.meta.glob("../assets/art/*.{png,jpg,jpeg,svg}", {
@@ -36,12 +47,7 @@ const HorizontalCarousel: React.FC<HorizontalCarouselProps> = ({ year }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hoverSide, setHoverSide] = useState<"left" | "right" | null>(null);
 
-  // Controls how many images are visible (for staggered fade)
   const [visibleCount, setVisibleCount] = useState(0);
-
-  // ✅ Lightbox / overlay state
-  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
-  const [overlayIndex, setOverlayIndex] = useState(0);
 
   const gap = 20;
   const STAGGER_DELAY = 120;
@@ -67,27 +73,10 @@ const HorizontalCarousel: React.FC<HorizontalCarouselProps> = ({ year }) => {
     if (currentIndex > 0) scrollToIndex(currentIndex - 1);
   };
 
-  // ✅ Overlay controls
-  const openOverlay = (index: number) => {
-    setOverlayIndex(index);
-    setIsOverlayOpen(true);
-  };
 
-  const closeOverlay = () => setIsOverlayOpen(false);
-
-  const overlayNext = () => {
-    setOverlayIndex((i) => Math.min(i + 1, images.length - 1));
-  };
-
-  const overlayPrev = () => {
-    setOverlayIndex((i) => Math.max(i - 1, 0));
-  };
-
-  // Reset + trigger sequential fade when year changes
   useEffect(() => {
     setCurrentIndex(0);
     setVisibleCount(0);
-    setIsOverlayOpen(false); // close overlay if year changes
 
     const container = containerRef.current;
     if (container) container.scrollTo({ left: 0 });
@@ -99,7 +88,7 @@ const HorizontalCarousel: React.FC<HorizontalCarouselProps> = ({ year }) => {
     });
   }, [year]);
 
-  // ✅ Wheel triggers next / prev like buttons
+
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -107,9 +96,6 @@ const HorizontalCarousel: React.FC<HorizontalCarouselProps> = ({ year }) => {
     let isThrottled = false;
 
     const handleWheel = (e: WheelEvent) => {
-      // if overlay is open, don't hijack wheel here
-      if (isOverlayOpen) return;
-
       e.preventDefault();
       if (isThrottled) return;
 
@@ -122,31 +108,7 @@ const HorizontalCarousel: React.FC<HorizontalCarouselProps> = ({ year }) => {
 
     container.addEventListener("wheel", handleWheel, { passive: false });
     return () => container.removeEventListener("wheel", handleWheel);
-  }, [currentIndex, images.length, isOverlayOpen]);
-
-  // ✅ Keyboard controls for overlay (Esc closes, arrows navigate)
-  useEffect(() => {
-    if (!isOverlayOpen) return;
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeOverlay();
-      if (e.key === "ArrowRight") overlayNext();
-      if (e.key === "ArrowLeft") overlayPrev();
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isOverlayOpen, images.length]);
-
-  // ✅ Prevent background scroll while overlay is open
-  useEffect(() => {
-    if (!isOverlayOpen) return;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prevOverflow;
-    };
-  }, [isOverlayOpen]);
+  }, [currentIndex, images.length]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!containerRef.current) return;
@@ -157,219 +119,93 @@ const HorizontalCarousel: React.FC<HorizontalCarouselProps> = ({ year }) => {
 
   const handleMouseLeave = () => setHoverSide(null);
 
-  const overlayArt = images[overlayIndex];
-
   return (
-    <>
-      {/* ✅ Overlay / Lightbox */}
-      {isOverlayOpen && overlayArt && (
-        <div
-          onClick={closeOverlay}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "#fff",
-            zIndex: 9999,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
+    <div
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        position: "relative",
+        width: "calc(100vw - 50px)",
+        marginTop: "15vh",
+        height: "60vh",
+        display: "flex",
+        alignItems: "center",
+        overflow: "hidden",
+      }}
+    >
+      {currentIndex > 0 && (
+        <button
+          onClick={prev}
+          className={`carousel-btn blackbut ${hoverSide === "left" ? "show" : ""}`}
+          style={{ left: 0 }}
         >
-          {/* Close button (optional, top-right) */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              closeOverlay();
-            }}
-            className="carousel-btn blackbut show"
-            style={{
-              position: "absolute",
-              top: 20,
-              right: 20,
-            }}
-            aria-label="Close"
-            title="Close (Esc)"
-          >
-            ✕
-          </button>
+          ‹
+        </button>
+      )}
 
-          {/* Prev (overlay) */}
-          {overlayIndex > 0 && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                overlayPrev();
-              }}
-              className="carousel-btn blackbut show"
-              style={{
-                position: "absolute",
-                left: 20,
-              }}
-              aria-label="Previous image"
-              title="Previous (←)"
-            >
-              ‹
-            </button>
-          )}
+      <div
+        ref={containerRef}
+        style={{
+          display: "flex",
+          height: "100%",
+          gap: `${gap}px`,
+          overflowX: "hidden",
+        }}
+      >
+        {images.map((art, idx) => {
+          const isLast = idx === images.length - 1;
+          const isVisible = idx < visibleCount;
 
-          {/* Next (overlay) */}
-          {overlayIndex < images.length - 1 && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                overlayNext();
-              }}
-              className="carousel-btn blackbut show"
-              style={{
-                position: "absolute",
-                right: 20,
-              }}
-              aria-label="Next image"
-              title="Next (→)"
-            >
-              ›
-            </button>
-          )}
-
-          {/* Image + meta */}
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              width: "min(92vw, 1400px)",
-              height: "min(84vh, 900px)",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
+          return (
             <div
+              key={idx}
+              ref={(el) => {
+                if (el) imgContainerRefs.current[idx] = el;
+              }}
+              className="carousel-item"
               style={{
-                flex: 1,
+                height: "100%",
+                flexShrink: 0,
+                width: isLast ? "calc(100vw - 50px)" : "auto",
                 display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                overflow: "hidden",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                justifyContent: "flex-start",
               }}
             >
               <img
-                src={overlayArt.src}
-                alt={overlayArt.title}
+                src={art.src}
+                alt={art.title}
+                onClick={() => openOverlay(art.file)}
                 style={{
-                  maxWidth: "100%",
-                  maxHeight: "100%",
+                  height: "80%",
                   objectFit: "contain",
+                  cursor: "pointer",
                 }}
+                className={[
+                  idx < currentIndex ? "fade-out" : "",
+                  isVisible ? "fade-in" : "pre-fade",
+                ].join(" ")}
+                title="Click to view full size"
               />
+
+              <div style={{ marginTop: "5px", fontWeight: "bold" }}>{art.title}</div>
+              <div style={{ fontSize: "0.9rem", color: "#555" }}>{art.medium}</div>
             </div>
-
-            <div style={{ marginTop: 10 }}>
-              <div style={{ fontWeight: "bold" }}>{overlayArt.title}</div>
-              <div style={{ fontSize: "0.9rem", color: "#555" }}>
-                {overlayArt.medium}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Carousel */}
-      <div
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{
-          position: "relative",
-          width: "calc(100vw - 50px)",
-          marginTop: "15vh",
-          height: "60vh",
-          display: "flex",
-          alignItems: "center",
-          overflow: "hidden",
-        }}
-      >
-        {/* Prev Button */}
-        {currentIndex > 0 && (
-          <button
-            onClick={prev}
-            className={`carousel-btn blackbut ${
-              hoverSide === "left" ? "show" : ""
-            }`}
-            style={{ left: 0 }}
-          >
-            ‹
-          </button>
-        )}
-
-        {/* Carousel images */}
-        <div
-          ref={containerRef}
-          style={{
-            display: "flex",
-            height: "100%",
-            gap: `${gap}px`,
-            overflowX: "hidden",
-          }}
-        >
-          {images.map((art, idx) => {
-            const isLast = idx === images.length - 1;
-            const isVisible = idx < visibleCount;
-
-            return (
-              <div
-                key={idx}
-                ref={(el) => {
-                  if (el) imgContainerRefs.current[idx] = el;
-                }}
-                className="carousel-item"
-                style={{
-                  height: "100%",
-                  flexShrink: 0,
-                  width: isLast ? "calc(100vw - 50px)" : "auto",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  justifyContent: "flex-start",
-                }}
-              >
-                <img
-                  src={art.src}
-                  alt={art.title}
-                  onClick={() => openOverlay(idx)}
-                  style={{
-                    height: "80%",
-                    objectFit: "contain",
-                    cursor: "pointer",
-                  }}
-                  className={[
-                    idx < currentIndex ? "fade-out" : "",
-                    isVisible ? "fade-in" : "pre-fade",
-                  ].join(" ")}
-                  title="Click to view full size"
-                />
-
-                <div style={{ marginTop: "5px", fontWeight: "bold" }}>
-                  {art.title}
-                </div>
-                <div style={{ fontSize: "0.9rem", color: "#555" }}>
-                  {art.medium}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Next Button */}
-        {currentIndex < images.length - 1 && (
-          <button
-            onClick={next}
-            className={`carousel-btn blackbut ${
-              hoverSide === "right" ? "show" : ""
-            }`}
-            style={{ right: 0, marginRight: "50px" }}
-          >
-            ›
-          </button>
-        )}
+          );
+        })}
       </div>
-    </>
+
+      {currentIndex < images.length - 1 && (
+        <button
+          onClick={next}
+          className={`carousel-btn blackbut ${hoverSide === "right" ? "show" : ""}`}
+          style={{ right: 0, marginRight: "50px" }}
+        >
+          ›
+        </button>
+      )}
+    </div>
   );
 };
 

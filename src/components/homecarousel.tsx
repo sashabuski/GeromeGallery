@@ -6,7 +6,7 @@ const artworkModules = import.meta.glob("../assets/bgimages/*.{png,jpg,jpeg,svg}
 
 const imageMap: Record<string, string> = {};
 Object.entries(artworkModules).forEach(([path, mod]: any) => {
-  const fileName = path.split("/").pop(); 
+  const fileName = path.split("/").pop();
   imageMap[fileName!] = mod.default;
 });
 
@@ -19,6 +19,15 @@ const HomeCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [mouseX, setMouseX] = useState(window.innerWidth / 2);
   const [showButtons, setShowButtons] = useState(false);
+
+  // NEW: white fade on first mount
+  const [enterFade, setEnterFade] = useState(true);
+
+  useEffect(() => {
+    // Let the overlay render first, then fade it out next frame
+    const raf = requestAnimationFrame(() => setEnterFade(false));
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   useEffect(() => {
     if (!artworks.length) return;
@@ -81,7 +90,9 @@ const HomeCarousel: React.FC = () => {
           />
         ))}
 
-      
+        {/* NEW: white overlay that fades away on mount */}
+        <div className={`enter-white ${enterFade ? "is-on" : "is-off"}`} />
+
         <button
           className={`carousel-btn left ${showButtons && isLeftSide ? "show" : ""}`}
           onClick={(e) => {
@@ -92,7 +103,6 @@ const HomeCarousel: React.FC = () => {
           ‹
         </button>
 
-    
         <button
           className={`carousel-btn right ${showButtons && !isLeftSide ? "show" : ""}`}
           onClick={(e) => {
@@ -104,12 +114,9 @@ const HomeCarousel: React.FC = () => {
         </button>
       </div>
 
-      <Link
-className="backgroundtag"
-to={`/sketch/${currentArtwork?.year}`}
->
-<span className="type">{currentArtwork?.type.toUpperCase()}</span> / {currentArtwork?.year}
-</Link>
+      <Link className="backgroundtag" to={`/sketch/${currentArtwork?.year}`}>
+        <span className="type">{currentArtwork?.type.toUpperCase()}</span> / {currentArtwork?.year}
+      </Link>
     </div>
   );
 };

@@ -1,30 +1,34 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import HomeCarousel from './components/homecarousel';
-import NavBar from './components/navbar';
-import ArtPage from './components/artpage';
-import './App.css';
+import React from "react";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
-const paintingDropdown = Array.from(
-  { length: 1900 - 1840 + 1 },
-  (_, i) => {
-    const year = 1840 + i;
-    return {
-      label: year.toString(),
-      link: `/painting/${year}`,
-    };
-  }
-);
+import HomeCarousel from "./components/homecarousel";
+import NavBar from "./components/navbar";
+import ArtPage from "./components/artpage";
+import ArtOverlayRoute from "./components/ArtOverlayRoute";
+
+import "./App.css";
+
+const paintingDropdown = Array.from({ length: 1900 - 1840 + 1 }, (_, i) => {
+  const year = 1840 + i;
+  return {
+    label: year.toString(),
+    link: `/painting/${year}`,
+  };
+});
 
 const sketchDropdown = [
   { label: "Pencil", link: `/sketch/pencil` },
   { label: "Ink", link: `/sketch/ink` },
 ];
 
-// Create a wrapper so useLocation is inside BrowserRouter
 const AppContent: React.FC = () => {
   const location = useLocation();
-  const isHomepage = location.pathname === "/";
+
+  // 👇 if we opened a modal, we saved the previous location here
+  const state = location.state as { backgroundLocation?: Location } | null;
+  const backgroundLocation = state?.backgroundLocation;
+
+  const isHomepage = (backgroundLocation ?? location).pathname === "/";
 
   return (
     <>
@@ -39,12 +43,31 @@ const AppContent: React.FC = () => {
 
       {isHomepage && <div className="overlay" />}
 
-      <Routes>
+      {/* ✅ Background routes:
+          If a modal is open, render the "backgroundLocation" instead of the current one,
+          so the painting page stays mounted (carousel position preserved). */}
+      <Routes location={backgroundLocation ?? location}>
         <Route path="/" element={<HomeCarousel />} />
+
+        {/* Normal painting page */}
         <Route path="/painting/:year" element={<ArtPage />} />
+
+        {/* Direct-link support (if someone loads the overlay URL directly) */}
+        <Route path="/painting/:year/:file" element={<ArtOverlayRoute />} />
+
+        {/* Sketch page */}
         <Route path="/sketch/:type" element={<ArtPage />} />
+
         <Route path="/about" element={<div>About page coming soon</div>} />
       </Routes>
+
+      {/* ✅ Modal routes:
+          If backgroundLocation exists, also render the overlay on top. */}
+      {backgroundLocation && (
+        <Routes>
+          <Route path="/painting/:year/:file" element={<ArtOverlayRoute />} />
+        </Routes>
+      )}
     </>
   );
 };

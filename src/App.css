@@ -6,7 +6,6 @@ html, body, #root {
   height: 100%;
   overflow: hidden;
   font-family: sans-serif;
-  background-color: black;
   font-family: "Fwont", sans-serif;
 }
 
@@ -368,4 +367,22 @@ font-style: normal;
 .fade-out {
   opacity: 0.3;
   transition: opacity 0.4s ease;
+}
+
+.carousel-container {
+  position: relative; /* important so overlay can sit on top */
+}
+
+.enter-white {
+  position: absolute;
+  inset: 0;
+  background: white;
+  pointer-events: none;
+  z-index: 9999; /* above images + buttons; adjust if needed */
+  opacity: 1;
+  transition: opacity 700ms ease;
+}
+
+.enter-white.is-off {
+  opacity: 0;
 }
